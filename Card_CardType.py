@@ -11,8 +11,16 @@ class CardType(enum.Enum):
 class Queen:
     def __init__(self,points):
         self.points = points
+    def __repr__(self):
+        return f"{self.points}"
     def getPoints(self):
         return self.points
+
+
 class Card:
-    type: CardType
-    value: int
+    def __init__(self,type,value):
+        self.type : CardType() = type
+        self.value : int = value
+    def __repr__(self):
+        return f"{self.type} {self.value}"
+
