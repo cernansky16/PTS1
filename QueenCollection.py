@@ -1,5 +1,6 @@
 from Card_CardType import Queen
 from Position import SleepingQueenPosition,Position,AwokenQueenPosition
+from random import shuffle
 class QueenCollection:
     def add(self,queen:Queen):
         pass
@@ -20,8 +21,7 @@ class AwokenQueens(QueenCollection):
 
 class SleepingQueens(QueenCollection):
     def __init__(self):
-        self.all_queens = [Queen(5), Queen(5), Queen(5), Queen(5), Queen(10), Queen(10), Queen(10), Queen(10),
+        self.sleeping_queens = [Queen(5), Queen(5), Queen(5), Queen(5), Queen(10), Queen(10), Queen(10), Queen(10),
                   Queen(15), Queen(15), Queen(15), Queen(20)]
+        shuffle(self.sleeping_queens)
 
-class MoveQueen:
-    pass

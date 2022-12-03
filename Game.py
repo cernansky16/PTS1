@@ -1,47 +1,38 @@
 from Player import Player
-from Hand import Hand
-from Card_CardType import Card
+from typing import List
+from Piles import DrawingAndTrashPile
 from QueenCollection import SleepingQueens
-from random import shuffle
-from GameState_PlayerState import GameState
+from GameState_PlayerState import GameState, PlayerState
+from Hand import Hand
 
 class Game:
     def __init__(self):
-        self.players = []
+        self._players = []
         self.drawing_and_trash_pile = DrawingAndTrashPile()
-        self.sleepingQueens = SleepingQueens()
+        self._sleepingQueens = SleepingQueens()
+        self._players_states: List[PlayerState] = list()
+
         for i in range(GameState.numberOfPlayers):
-            cards = []
+            self._players.append(Player(Hand(i,self.drawing_and_trash_pile)))
             for x in range(5):
-                cards.append(self.drawing_and_trash_pile.all_cards.pop())
-            self.players.append(Player(Hand(i,cards)))
-
-class DrawingAndTrashPile:
-    def __init__(self):
-        self.all_cards = []
-        for i in range(10):
-            self.all_cards.append(Card(1, i))
-        for i in range(4):
-            self.all_cards.append(Card(1, 0))
-            self.all_cards.append(Card(2, 0))
-            self.all_cards.append(Card(3, 0))
-            self.all_cards.append(Card(4, 0))
-        for j in range(3):
-            self.all_cards.append(Card(5, 0))
-            self.all_cards.append(Card(6, 0))
-
-        shuffle(self.all_cards)
-
-    def discardAndDraw(self,discard:list[Card]): #-> list[Card]
+                card = self.drawing_and_trash_pile.drawing_pile.pop()
+                card.setHandPosition(x, i)
+                self._players[i].hand.cards.append(card)
+    def play(self):
         pass
-    def newTurn(self):
-        pass
-    def getCardsDiscardedThisTurn(self):
-        pass
+
+
+
+
 
 # GameState()
 # GameState.numberOfPlayers = 4
 # a = Game()
+# carty = list()
+# for i in a._players[0].hand.cards:
+#     if i.getType() == 1:
+#         carty.append(i)
+# print(a._players[0].evaluateNumberedCards(carty))
 
 
 
