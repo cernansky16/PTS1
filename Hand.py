@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import Union, TYPE_CHECKING
+from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from Player import Player
@@ -27,13 +27,13 @@ class Hand:
             self.picked.append(self.cards.pop(x.getCardIndex()))
         return self.picked
 
-    def removePickedCardsAndDraw(self):
+    def removePickedCardsAndDraw(self) -> None:
         new_cards: List[Card] = self.drawing_and_trash_pile.discardAndDraw(self.picked)
         for i in new_cards:
             i.setHandPosition(len(self.cards), self.getIndex())
             self.cards.append(i)
 
-    def returnPickedCards(self):
+    def returnPickedCards(self) -> None:
          for i in self.picked:
              self.cards.append(i)
          self.picked = list()

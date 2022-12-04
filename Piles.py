@@ -1,5 +1,6 @@
 from Card_CardType import Card
 from random import shuffle
+from typing import List
 
 class DrawingAndTrashPile:
     def __init__(self):
@@ -23,6 +24,7 @@ class DrawingAndTrashPile:
         self.discardedThisTurn = discard
         new_cards: list[Card] = list()
         for x in discard:
+            x.setHandPosition(None,None)
             self.trash_pile.append(x)
             if not self.drawing_pile:
                 self.reset()
@@ -36,14 +38,10 @@ class DrawingAndTrashPile:
         #      self.trash_pile.append(x)
         #      card = self.drawing_pile.pop(0)
         #      new_cards.append(self.drawing_pile.pop(0))
-
-    # def newTurn(self):
-    #     pass
-    #
-    def getCardsDiscardedThisTurn(self):
+    def getCardsDiscardedThisTurn(self) -> List[Card]:
         return self.discardedThisTurn
 
-    def reset(self):
+    def reset(self) -> None:
         shuffle(self.trash_pile)
         self.drawing_pile = self.trash_pile[:]
         self.trash_pile = list()

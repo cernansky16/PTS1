@@ -1,19 +1,20 @@
 from Card_CardType import Queen
-from Position import SleepingQueenPosition,Position,AwokenQueenPosition
+from Position import SleepingQueenPosition,Position
 from typing import List,Optional
 
 class QueenCollection:
     def __init__(self, collection= []):
-
         self.collection: List[Queen] = collection
-    def add(self,queen:Queen):
+
+    def add(self,queen:Queen) -> None:
         self.collection.append(queen)
+
     def removeQueen(self,position:SleepingQueenPosition) -> Optional[Queen]:
         try:
             self.collection.pop(position.getCardIndex())
         except IndexError:
             return None
-    def getQueens(self): #map[Position,Queen]
+    def getQueens(self) -> List[Queen]:
         return self.collection
 
 class MoveQueen:
