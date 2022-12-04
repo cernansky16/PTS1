@@ -22,7 +22,7 @@ class TestHand(unittest.TestCase):
         ruka.removePickedCardsAndDraw()
         self.assertEqual(5,len(ruka.getCards()))
         self.assertEqual(kopka.getCardsDiscardedThisTurn(),[Card(1, 1), Card(1, 2), Card(1, 3)])
-        self.assertTrue(len(kopka.trash_pile)==3)
+        self.assertEqual(len(kopka.trash_pile),3)
 
 if __name__ == '__main__':
     unittest.main()
