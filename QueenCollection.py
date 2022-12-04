@@ -14,7 +14,7 @@ class QueenCollection:
 
     def removeQueen(self,position:SleepingQueenPosition) -> Optional[Queen]:
         try:
-            self.collection.pop(position.getCardIndex())
+            return self.collection.pop(position.getCardIndex())
         except IndexError:
             return None
     def getQueens(self) -> List[Queen]:
