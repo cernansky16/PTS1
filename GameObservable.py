@@ -28,7 +28,8 @@ class GamePlayerInterface:
 
 class GameAdaptor(GamePlayerInterface):
     def __init__(self):
-        self.game = Game()
+        self.observable = GameObservable()
+        self.game = Game(len(self.observable.players))
     def play(self,player : str, cards: str) ->None:
         index = int(player)
         player = self.game.players[index-1]
@@ -37,6 +38,12 @@ class GameAdaptor(GamePlayerInterface):
             handpos : List[HandPosition] = []
             sleepingpos = None
             awokenqueenpos = None
+            """
+            Commands
+            h<n> stands for hand of n-th player
+            a<n><m> stands for attacking n-th player´s m-th queen
+            s<n> stands for awakening n-th sleepingqueen from deck 
+            """
             for command in commands:
                 if command[0] == "h":
                     index = int(command[1])

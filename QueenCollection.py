@@ -3,8 +3,11 @@ from Position import SleepingQueenPosition,Position
 from typing import List,Optional
 
 class QueenCollection:
-    def __init__(self, collection= []):
-        self.collection: List[Queen] = collection
+    def __init__(self, collection= None):
+        if collection is None:
+            self.collection = list()
+        else:
+            self.collection: List[Queen] = collection
 
     def add(self,queen:Queen) -> None:
         self.collection.append(queen)

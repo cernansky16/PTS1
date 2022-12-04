@@ -1,9 +1,7 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
 
-if TYPE_CHECKING:
-    from Player import Player
-from Card_CardType import CardType,Card
+from Card_CardType import CardType,Card,Queen
 from Position import Position,HandPosition,AwokenQueenPosition
 from typing import List,Optional
 from GameState_PlayerState import GameState
@@ -22,9 +20,15 @@ class Hand:
     def pickCards(self, position: List[HandPosition]) -> Optional[List[Card]]:
         if not position:
             return None
-        self.picked = list()
+        self.picked : List[Card] = []
         for x in position:
-            self.picked.append(self.cards.pop(x.getCardIndex()))
+            if x.getCardIndex() > 5:
+                return None
+            self.picked.append(self.cards[x.getCardIndex()])
+        i = 0 # i is to assure that the card is poped at the right positions
+        for x in position:
+            self.cards.pop(x.getCardIndex()-i)
+            i += 1
         return self.picked
 
     def removePickedCardsAndDraw(self) -> None:
@@ -48,31 +52,28 @@ class Hand:
         return self.cards
 
 class EvaluateAttack:
-    def __init__(self,card:[Card],attacker: HandPosition, victim: AwokenQueenPosition):
+    def __init__(self,card:Card,attacker: HandPosition, victim: AwokenQueenPosition):
         self.typeOfAttack: [Card] = card
         self.targetQueen = victim
-        self.victim: Player = victim.getPlayer()
-        self.attacker: Player = attacker.getPlayer()
+        self.victim = victim.getPlayer()
+        self.attacker = attacker.getPlayer()
         if self.typeOfAttack.getType() == 3:
-            self.defenseCardType = CardType.Dragon
-        if self.typeOfAttack.getType() == 4:
-            self.defenseCardType = CardType.MagicWand
+            self.defenseCardType = 5
+        elif self.typeOfAttack.getType() == 4:
+            self.defenseCardType = 6
 
-    def play(self, targetqueen: Position, targetplayeridx: int) -> bool:
-        if targetplayeridx >= GameState.numberOfPlayers:
-            return False
+    def play(self) -> bool:
         if self.victim.hand.hasCardOfType(self.defenseCardType):
             for x in self.victim.hand.getCards():
                 card: Card = x
                 if card.getType() == self.defenseCardType:
                     pos = card.getHandPosition()
 
-            self.victim.hand.pickCards(pos)
+            self.victim.hand.pickCards([pos])
+            self.victim.hand.removePickedCardsAndDraw()
             return True
         else:
-            queen = self.victim.awoken.removeQueen(targetqueen)
-            if queen == None:
-                return False
+            queen: Queen = self.victim.awoken.removeQueen(self.targetQueen)
             self.attacker.awoken.add(queen)
             return True
 
