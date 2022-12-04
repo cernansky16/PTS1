@@ -1,27 +1,30 @@
 from Card_CardType import Queen
 from Position import SleepingQueenPosition,Position,AwokenQueenPosition
-from random import shuffle
+from typing import List,Optional
+
 class QueenCollection:
+    def __init__(self, collection= []):
+
+        self.collection: List[Queen] = collection
     def add(self,queen:Queen):
-        pass
-    def removeQueen(self,position:SleepingQueenPosition):
-        pass
+        self.collection.append(queen)
+    def removeQueen(self,position:SleepingQueenPosition) -> Optional[Queen]:
+        try:
+            self.collection.pop(position.getCardIndex())
+        except IndexError:
+            return None
     def getQueens(self): #map[Position,Queen]
-        pass
-class AwokenQueens(QueenCollection):
-    def __init__(self):
-        self.playeridx: int
-    def addQueen(self,queen:Queen):
-        pass
-    def pickQueen(self, position:AwokenQueenPosition):
-        pass
+        return self.collection
 
-    def getplayerIndex(self):
-        return self.playeridx
-
-class SleepingQueens(QueenCollection):
-    def __init__(self):
-        self.sleeping_queens = [Queen(5), Queen(5), Queen(5), Queen(5), Queen(10), Queen(10), Queen(10), Queen(10),
-                  Queen(15), Queen(15), Queen(15), Queen(20)]
-        shuffle(self.sleeping_queens)
-
+class MoveQueen:
+    def __init__(self,sleeping):
+        self.sleeping_queens = sleeping
+    def play(self, targetQueen: Position,attack) -> bool:
+        if self.sleeping_queens[targetQueen.getCardIndex()] is not None:
+                self.last = self.sleeping_queens[targetQueen.getCardIndex()]
+                self.sleeping_queens[targetQueen.getCardIndex()] = None
+                return True
+        else:
+            return False
+    def getLastMoved(self):
+        return self.last
