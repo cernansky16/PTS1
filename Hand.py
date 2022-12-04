@@ -20,27 +20,27 @@ class Hand:
     def pickCards(self, position: List[HandPosition]) -> Optional[List[Card]]:
         if not position:
             return None
-        self.picked : List[Card] = []
+        picked : List[Card] = []
         for x in position:
             if x.getCardIndex() > 5:
                 return None
-            self.picked.append(self.cards[x.getCardIndex()])
+            picked.append(self.cards[x.getCardIndex()])
         i = 0 # i is to assure that the card is poped at the right positions
         for x in position:
             self.cards.pop(x.getCardIndex()-i)
             i += 1
-        return self.picked
+        return picked
 
-    def removePickedCardsAndDraw(self) -> None:
-        new_cards: List[Card] = self.drawing_and_trash_pile.discardAndDraw(self.picked)
+    def removePickedCardsAndDraw(self,picked) -> None:
+        new_cards: List[Card] = self.drawing_and_trash_pile.discardAndDraw(picked)
         for i in new_cards:
             i.setHandPosition(len(self.cards), self.getIndex())
             self.cards.append(i)
 
-    def returnPickedCards(self) -> None:
-         for i in self.picked:
-             self.cards.append(i)
-         self.picked = list()
+    # def returnPickedCards(self) -> None:
+    #      for i in self.picked:
+    #          self.cards.append(i)
+    #      self.picked = list()
 
     def hasCardOfType(self, type: CardType) -> bool:
         for i in self.cards:
@@ -69,13 +69,19 @@ class EvaluateAttack:
                 if card.getType() == self.defenseCardType:
                     pos = card.getHandPosition()
 
-            self.victim.hand.pickCards([pos])
-            self.victim.hand.removePickedCardsAndDraw()
+            picked = self.victim.hand.pickCards([pos])
+            self.victim.hand.removePickedCardsAndDraw(picked)
             return True
         else:
-            queen: Queen = self.victim.awoken.removeQueen(self.targetQueen)
-            self.attacker.awoken.add(queen)
-            return True
+            if self.typeOfAttack.getType() == 3:
+                queen: Queen = self.victim.awoken.removeQueen(self.targetQueen)
+                self.attacker.awoken.add(queen)
+                return True
+            elif self.typeOfAttack.getType() == 4:
+                queen = self.victim.awoken.removeQueen(self.targetQueen)
+                self.victim.move_queen.sleeping_queens.add(queen)
+                return True
+
 
 
 

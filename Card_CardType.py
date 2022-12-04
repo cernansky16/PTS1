@@ -29,8 +29,8 @@ class Card:
         self.type: CardType = type
         self.value: int = value
 
-    # def __repr__(self):
-    #     return f"{self.type} {self.value}"
+    def __repr__(self):
+        return f"{self.type} {self.value}"
 
     def setHandPosition(self,card0, player0) -> None:
         self.handPosition = HandPosition(card0, player0)

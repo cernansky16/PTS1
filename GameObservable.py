@@ -40,7 +40,7 @@ class GameAdaptor(GamePlayerInterface):
             awokenqueenpos = None
             """
             Commands
-            h<n> stands for hand of n-th player
+            h<n> stands n-th card from hand
             a<n><m> stands for attacking n-th player´s m-th queen
             s<n> stands for awakening n-th sleepingqueen from deck 
             """
