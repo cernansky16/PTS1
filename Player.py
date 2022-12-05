@@ -22,12 +22,14 @@ class Player:
         awoken_queens: List[AwokenQueenPosition] = [pos for pos in cards if type(pos) == AwokenQueenPosition]
         if len(hand_pos) == 1 and len(awoken_queens) == 1 and not sleeping_queens:
             index = hand_pos[0].getCardIndex()
-            if self.hand.getCards()[index].getType() == 3 or self.hand.getCards()[index].getType() == 4:
+            cards = self.hand.getCards()
+            if cards[index].getType() == 3 or cards[index].getType() == 4:
                 attack_card = self.hand.pickCards(hand_pos)
                 self.hand.removePickedCardsAndDraw(attack_card)
-                a = EvaluateAttack(attack_card.pop(),hand_pos.pop(),awoken_queens.pop())
+                a = EvaluateAttack(attack_card[0],hand_pos[0],awoken_queens[0])
+                a.play()
                 self.update_state()
-                return a.play()
+                return True
             else:
                 return False
         if hand_pos and not awoken_queens and not sleeping_queens:
@@ -57,7 +59,7 @@ class Player:
     def getPlayerState(self) -> PlayerState:
         return self.state
 
-    def update_state(self):
+    def update_state(self) -> None:
         self.state.awokenQueens = self.awoken
         self.state.cards = self.hand.getCards()
 
@@ -77,7 +79,7 @@ class Player:
             return False
         else:
             left_side_of_equation = 0
-            for x in cards[:length-2]:
+            for x in cards[:length-1]:
                 left_side_of_equation += x.getValue()
             if left_side_of_equation == cards[-1].getValue():
                 return True

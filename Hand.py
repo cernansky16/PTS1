@@ -1,11 +1,9 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
 
-from Card_CardType import CardType,Card,Queen
-from Position import Position,HandPosition,AwokenQueenPosition
+from Card_CardType import Card,Queen
+from Position import HandPosition,AwokenQueenPosition
 from typing import List,Optional
-from GameState_PlayerState import GameState
-
 
 class Hand:
     def __init__(self,idx,drawing_pile):
@@ -36,13 +34,20 @@ class Hand:
         for i in new_cards:
             i.setHandPosition(len(self.cards), self.getIndex())
             self.cards.append(i)
+    def IndexOfCardOfType(self,type) -> int:
+        idx = 0
+        for card in self.cards:
+            if card.type == type:
+                return idx
+            idx += 1
+        return -1
 
     # def returnPickedCards(self) -> None:
     #      for i in self.picked:
     #          self.cards.append(i)
     #      self.picked = list()
 
-    def hasCardOfType(self, type: CardType) -> bool:
+    def hasCardOfType(self, type: int) -> bool:
         for i in self.cards:
             if i.getType() == type:
                 return True
@@ -64,21 +69,21 @@ class EvaluateAttack:
 
     def play(self) -> bool:
         if self.victim.hand.hasCardOfType(self.defenseCardType):
-            for x in self.victim.hand.getCards():
-                card: Card = x
-                if card.getType() == self.defenseCardType:
-                    pos = card.getHandPosition()
-
+            idx = self.victim.hand.IndexOfCardOfType(self.defenseCardType)
+            pos = self.victim.hand.cards[idx].getHandPosition()
             picked = self.victim.hand.pickCards([pos])
             self.victim.hand.removePickedCardsAndDraw(picked)
             return True
         else:
             if self.typeOfAttack.getType() == 3:
                 queen: Queen = self.victim.awoken.removeQueen(self.targetQueen)
+                print(queen)
+                self.victim.update_state()
                 self.attacker.awoken.add(queen)
                 return True
             elif self.typeOfAttack.getType() == 4:
                 queen = self.victim.awoken.removeQueen(self.targetQueen)
+                self.victim.update_state()
                 self.victim.move_queen.sleeping_queens.add(queen)
                 return True
 

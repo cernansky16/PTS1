@@ -39,9 +39,10 @@ class MoveQueen:
     def __init__(self,sleeping):
         self.sleeping_queens: QueenCollection= sleeping
     def play(self, targetQueen: Position) -> bool:
-        if self.sleeping_queens.getQueens()[targetQueen.getCardIndex()] is not None:
-                self.last = self.sleeping_queens.removeQueen(targetQueen)
-                return True
+        queens = self.sleeping_queens.getQueens()
+        if queens[targetQueen.getCardIndex()] is not None:
+            self.last = self.sleeping_queens.removeQueen(targetQueen)
+            return True
         else:
             return False
     def getLastMoved(self):

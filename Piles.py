@@ -35,6 +35,7 @@ class DrawingAndTrashPile:
         # if len(discard) > len(self.drawing_pile):
         #     self.reset()
         # for x in discard:
+        #      x.setHandPosition(None, None)
         #      self.trash_pile.append(x)
         #      card = self.drawing_pile.pop(0)
         #      new_cards.append(self.drawing_pile.pop(0))

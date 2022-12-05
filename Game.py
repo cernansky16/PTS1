@@ -18,6 +18,10 @@ class Game:
         shuffle(kralovne)
         self.sleeping_queens = QueenCollection(kralovne)
         self._players_states: List[PlayerState] = list()
+        if self.numofplayers == 2 or self.numofplayers == 3:
+            self.required_points = 50
+        if self.numofplayers == 4 or self.numofplayers == 5:
+            self.required_points = 40
 
         for i in range(self.numofplayers):
             hand: Hand = Hand(i, self.drawing_and_trash_pile)
