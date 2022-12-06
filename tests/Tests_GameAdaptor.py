@@ -1,7 +1,7 @@
 import unittest
-from GameObservable import GameAdaptor,GameObservable
+from GameObservable_GameAdaptor import GameAdaptor
 from Game import Game
-from Card_CardType import Card,Queen
+from Card_CardType import Card
 from Position import SleepingQueenPosition
 
 class TestGameAdaptor(unittest.TestCase):
@@ -18,7 +18,7 @@ class TestGameAdaptor(unittest.TestCase):
         self.assertTrue(isinstance(adaptor.game,Game))
         #inserting cards to hands of players just for testing
         adaptor.game.players[0].hand.cards = [Card(1,1),Card(2,0),Card(5,0),Card(1,1),Card(2,0)]
-        adaptor.game.players[1].hand.cards = [Card(1,1),Card(2,0),Card(3,0),Card(3,1),Card(2,0)]
+        adaptor.game.players[1].hand.cards = [Card(1,1),Card(2,0),Card(3,0),Card(3,0),Card(2,0)]
         #game has begun
         adaptor.play("1", "h2 s1")
         adaptor.play("2", "h2 s4")
@@ -36,8 +36,13 @@ class TestGameAdaptor(unittest.TestCase):
         adaptor.game.players[0].awoken.add(adaptor.game.sleeping_queens.removeQueen(SleepingQueenPosition(8)))
         adaptor.game.players[0].awoken.add(adaptor.game.sleeping_queens.removeQueen(SleepingQueenPosition(7)))
         # he has a lot of point but i am testing the last move where game writes that it is finished
-        adaptor.play("1","h1 s6")
-
-
+        adaptor.play("1", "h1 s6")
+        #the game has ended
+        #print(adaptor.game.players[1].hand.cards)
+        ## just testing ilegal move
+        adaptor.play("2", "h1 h2")
+        #print(adaptor.game.players[1].hand.cards)
+        #the picked cards were a king and a numbered card, they werent used, because it would
+        # be illegal, they were inserted into back of players2 hand
 
 

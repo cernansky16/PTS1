@@ -5,7 +5,7 @@ from typing import List
 class DrawingAndTrashPile:
     def __init__(self):
         self.drawing_pile = []
-        self.trash_pile = []
+        self._trash_pile = []
         for i in range(1,11):
             for j in range(4):
                 self.drawing_pile.append(Card(1, i))
@@ -25,7 +25,7 @@ class DrawingAndTrashPile:
         new_cards: list[Card] = list()
         for x in discard:
             x.setHandPosition(None,None)
-            self.trash_pile.append(x)
+            self._trash_pile.append(x)
             if not self.drawing_pile:
                 self.reset()
             new_cards.append(self.drawing_pile.pop(0))
@@ -39,10 +39,11 @@ class DrawingAndTrashPile:
         #      self.trash_pile.append(x)
         #      card = self.drawing_pile.pop(0)
         #      new_cards.append(self.drawing_pile.pop(0))
+
     def getCardsDiscardedThisTurn(self) -> List[Card]:
         return self.discardedThisTurn
 
     def reset(self) -> None:
-        shuffle(self.trash_pile)
-        self.drawing_pile = self.trash_pile[:]
-        self.trash_pile = list()
+        shuffle(self._trash_pile)
+        self.drawing_pile = self._trash_pile[:]
+        self._trash_pile = list()

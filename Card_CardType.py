@@ -28,15 +28,16 @@ class Card:
     def __init__(self,type,value):
         self.type: CardType = type
         self.value: int = value
+        self._handPosition = HandPosition(None, None)
 
     def __repr__(self):
         return f"{self.type} {self.value}"
 
     def setHandPosition(self,card0, player0) -> None:
-        self.handPosition = HandPosition(card0, player0)
+        self._handPosition = HandPosition(card0, player0)
 
     def getHandPosition(self) -> Position:
-        return self.handPosition
+        return self._handPosition
 
     def getValue(self) -> int:
         return self.value

@@ -4,22 +4,21 @@ from Card_CardType import Card
 from Position import Position,AwokenQueenPosition,HandPosition,SleepingQueenPosition
 from Hand import EvaluateAttack,Hand
 from QueenCollection import QueenCollection,MoveQueen
+
 class Player:
-    def __init__(self, hand,movequeeninstance):
+    def __init__(self, hand, movequeeninstance):
         self.hand: Hand = hand
         self.awoken: QueenCollection = QueenCollection()
         self.state: PlayerState = PlayerState(self.hand.cards, self.awoken)
         self.move_queen: MoveQueen = movequeeninstance
 
-
-
     def __repr__(self):
         return self.hand.getIndex()
 
     def play(self, cards: List[Position]) -> bool:
-        hand_pos:List[HandPosition] = [pos for pos in cards if type(pos) == HandPosition]
-        sleeping_queens: List[SleepingQueenPosition] = [pos for pos in cards if type(pos) == SleepingQueenPosition]
-        awoken_queens: List[AwokenQueenPosition] = [pos for pos in cards if type(pos) == AwokenQueenPosition]
+        hand_pos:List[HandPosition] = [pos for pos in cards if isinstance(pos,HandPosition)]
+        sleeping_queens: List[SleepingQueenPosition] = [pos for pos in cards if isinstance(pos,SleepingQueenPosition)]
+        awoken_queens: List[AwokenQueenPosition] = [pos for pos in cards if isinstance(pos,AwokenQueenPosition)]
         if len(hand_pos) == 1 and len(awoken_queens) == 1 and not sleeping_queens:
             index = hand_pos[0].getCardIndex()
             cards = self.hand.getCards()
@@ -33,16 +32,17 @@ class Player:
             else:
                 return False
         if hand_pos and not awoken_queens and not sleeping_queens:
-            picked: List[Card] = self.hand.pickCards(cards)
+            picked: List[Card] = self.hand.pickCards(hand_pos)
             countofNumbered = 0
             for card in picked:
                 if card.getType() == 1:
                     countofNumbered += 1
-            if len(picked) == countofNumbered:
+            if len(picked) == countofNumbered or len(picked) == 1:
                 self.hand.removePickedCardsAndDraw(picked)
                 self.update_state()
                 return self.evaluateNumberedCards(picked)
             elif countofNumbered != 0:
+                self.hand.returnPickedCards(picked)
                 return False
         elif len(hand_pos) == 1 and len(sleeping_queens) == 1 and not awoken_queens:
             card: [Card] = self.hand.pickCards(hand_pos)
@@ -53,6 +53,9 @@ class Player:
                 self.hand.removePickedCardsAndDraw(card)
                 self.update_state()
                 return True
+            else:
+                self.hand.returnPickedCards(card)
+                return False
         else:
             return False
 

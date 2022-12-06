@@ -1,5 +1,5 @@
 import unittest
-from unittest.mock import Mock
+from unittest.mock import Mock,MagicMock
 from Game import  Game
 from Card_CardType import Card,Queen
 from QueenCollection import QueenCollection
@@ -9,20 +9,23 @@ from Piles import DrawingAndTrashPile
 
 class TestPlayer(unittest.TestCase):
 
-    def test_Player(self):
-        hra = Mock()
-        hrac0 = Player(Mock(),Mock())
-        hrac0.hand.cards = [Card(1,1),Card(1,4),Card(3,0),Card(1,5),Card(6,0)]
-        hrac0.hand.cards[0].setHandPosition(0, hrac0)
-        hrac0.hand.cards[1].setHandPosition(1, hrac0)
-        hrac0.hand.cards[2].setHandPosition(2, hrac0)
-        hrac0.hand.cards[3].setHandPosition(3, hrac0)
-        hrac0.hand.cards[4].setHandPosition(4, hrac0)
+    def test_Player_solitary(self):
+        self.hra = Mock()
+        self.hrac0 = Player(Mock(),Mock())
+        self.hra.drawing_and_trash_pile = Mock()
+        self.hrac0.hand.cards = [Card(1,1),Card(1,4),Card(3,0),Card(1,5),Card(6,0)]
+        self.hrac0.hand.cards[0].setHandPosition(0, self.hrac0)
+        self.hrac0.hand.cards[1].setHandPosition(1, self.hrac0)
+        self.hrac0.hand.cards[2].setHandPosition(2, self.hrac0)
+        self.hrac0.hand.cards[3].setHandPosition(3, self.hrac0)
+        self.hrac0.hand.cards[4].setHandPosition(4, self.hrac0)
         #testing method evaluated numbered cards
-        self.assertTrue(hrac0.evaluateNumberedCards([Card(1,1)]))
-        self.assertTrue(hrac0.evaluateNumberedCards([Card(1,1),Card(1,4),Card(1,5)])) # valid equation
-        self.assertTrue(hrac0.evaluateNumberedCards([Card(1,4),Card(1,4)]))
-        self.assertFalse(hrac0.evaluateNumberedCards([Card(1, 4), Card(1, 2)]))
+        self.assertTrue(self.hrac0.evaluateNumberedCards([Card(1,1)]))
+        self.assertTrue(self.hrac0.evaluateNumberedCards([Card(1,1),Card(1,4),Card(1,5)])) # valid equation
+        self.assertTrue(self.hrac0.evaluateNumberedCards([Card(1,4),Card(1,4)]))
+        self.assertFalse(self.hrac0.evaluateNumberedCards([Card(1, 4), Card(1, 2)]))
+        self.hrac0.hand.pickCards = MagicMock(return_value = [Card(1,1)])
+        self.hrac0.play([HandPosition(0,self.hrac0)])
 
     def testGame(self):
 
@@ -36,7 +39,7 @@ class TestPlayer(unittest.TestCase):
         state = hra.play(0,[HandPosition(0,hra.players[0]),SleepingQueenPosition(9)]) #player0 has played a king to awaken a queen
         self.assertEqual(state.onTurn,1) # now is on turn player 1
         self.assertEqual(len(hra.players[0].awoken.getQueens()),1)
-        hra.players[0].hand.cards[0] = Card(2, 0)
+        self.assertIsNone(hra.sleeping_queens.collection[9])
 
     def test_drawing_and_trash_pile(self):
         pile = DrawingAndTrashPile()
@@ -58,6 +61,15 @@ class TestPlayer(unittest.TestCase):
         colection.add(Queen(5))
         self.assertEqual(colection.removeQueen(SleepingQueenPosition(98)),None) #wrong position
         self.assertEqual(colection.removeQueen(SleepingQueenPosition(1)),Queen(5))
+    def testQueen(self):
+        queen = Queen(20)
+        self.assertEqual(20,queen.getPoints())
+    def testCardType(self):
+        card = Card(6,0)
+        self.assertEqual(6, card.getType())
+        self.assertEqual(0, card.getValue())
+        card.setHandPosition(0,Mock())
+        self.assertIsInstance(card.getHandPosition(),HandPosition)
 
 if __name__ == '__main__':
     unittest.main()

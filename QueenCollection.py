@@ -1,5 +1,5 @@
 from Card_CardType import Queen
-from Position import SleepingQueenPosition,Position
+from Position import Position
 from typing import List,Optional
 
 class QueenCollection:
@@ -32,12 +32,16 @@ class QueenCollection:
                 return self.collection.pop(position.getCardIndex())
             except IndexError:
                 return None
+
     def getQueens(self) -> List[Queen]:
         return self.collection
 
+
 class MoveQueen:
+
     def __init__(self,sleeping):
         self.sleeping_queens: QueenCollection= sleeping
+        
     def play(self, targetQueen: Position) -> bool:
         queens = self.sleeping_queens.getQueens()
         if queens[targetQueen.getCardIndex()] is not None:

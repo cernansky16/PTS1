@@ -1,13 +1,16 @@
-from Position import HandPosition,SleepingQueenPosition,AwokenQueenPosition
+from Position import SleepingQueenPosition,AwokenQueenPosition
 from Card_CardType import Card,Queen
-from typing import Optional
+from typing import Optional,List
+
 
 class GameState:
     numberOfPlayers: int
-    onTurn: int
-    sleepingQueens: set[SleepingQueenPosition]
-    AwokenQueens: dict[AwokenQueenPosition]
-    cardsDiscardedLastTurn: list[Card]
+    onTurn: int = 0
+    sleepingQueens: List[SleepingQueenPosition]
+    AwokenQueens: List[AwokenQueenPosition]
+    cardsDiscardedLastTurn: List[Card]
+
+
 class PlayerState:
     def __init__(self,cards, awokenQueens):
         self.cards: dict[int,Optional[Card]] = cards

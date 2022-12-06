@@ -1,8 +1,6 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING,List
-
-if TYPE_CHECKING:
-    from Position import HandPosition, SleepingQueenPosition,AwokenQueenPosition
+from typing import List
+from Position import HandPosition, SleepingQueenPosition,AwokenQueenPosition,Position
 from Game import Game
 
 class GameObserverInterface:
@@ -14,16 +12,22 @@ class GameObservable(GameObserverInterface):
         self.players = list()
         self.observers = list()
 
-    def add(self,observer: GameObserverInterface) -> None:
+    def addObserver(self,observer: GameObserverInterface) -> None:
         self.observers.append(observer)
 
-    def addPlayer(self,player,observer) -> None:
-        if len(self.players) > 5:
-            self.observers.append(observer)
+    def addPlayer(self,player) -> None:
+        if len(self.players) < 5:
+            self.observers.append(player)
             self.players.append(player)
 
     def remove(self,observer) -> None:
         self.observers.remove(observer)
+
+    def getObservers(self):
+        return self.observers
+
+    def getPlayers(self):
+        return self.players
 
     def notifyPlayer(self,idx,message) -> None:
         pass
@@ -41,18 +45,22 @@ class GameAdaptor(GamePlayerInterface):
 
     def __init__(self):
         self.observable = GameObservable()
+        self.game = None
 
     def create_game(self):
         self.game = Game(len(self.observable.players))
 
     def play(self,player : str, cards: str) ->None:
         index = int(player)
+        if index-1 != self.game.state.onTurn:
+            self.observable.notifyPlayer(index,"It is not your turn")
+            print("It is not your turn")
+            return
         player = self.game.players[index-1]
         commands = cards.split()
-        def getPositions():
-            handpos : List[HandPosition] = []
-            sleepingpos = None
-            awokenqueenpos = None
+        def getPositions() -> List[Position]:
+
+            positions = list()
             """
             Commands
             h<n> stands n-th card from hand
@@ -62,26 +70,38 @@ class GameAdaptor(GamePlayerInterface):
             for command in commands:
                 if command[0] == "h":
                     index = int(command[1])
-                    if index > self.game.numofplayers:
-                        self.observable.notifyPlayer(index,"Wrong index")
-                    pos = HandPosition(index-1,player)
-                    handpos.append(pos)
+                    if index > 5:
+                        self.observable.notifyPlayer(index,"Wrong index of card")
+                        return list()
+                    pos = HandPosition(index-1, player)
+                    positions.append(pos)
                 elif command[0] == "a":
                     index = int(command[2])
                     playerIdx = int(command[1])
-                    if index > self.game.numofplayers:
+                    if playerIdx> self.game.numofplayers:
                         self.observable.notifyPlayer(playerIdx,"Wrong index")
-                    awokenqueenpos = AwokenQueenPosition(index-1,self.game.players[playerIdx-1])
+                        return list()
+                    positions.append(AwokenQueenPosition(index-1,self.game.players[playerIdx-1]))
                 elif command[0] == "s":
-                    index = int(command[1])
+                    index = int(command[1:])
                     if index > 12:
                         self.observable.notifyAll("There are only 12 queens in the game")
-                    sleepingpos = SleepingQueenPosition(index-1)
-                return [handpos, sleepingpos, awokenqueenpos]
+                        return list()
 
-        self.game.play(index, getPositions())
+                    else:
+                        positions.append(SleepingQueenPosition(index-1))
+            return positions
+
+        self.game.play(index-1, getPositions())
+        if self.isFinished()[0]:
+            print(f"The game has ended, winner is player {self.isFinished()[1]}")
+
+
+    def isFinished(self) -> (bool,str):
+        ended = False
         if self.game.sleeping_queens.getQueens() == [None for i in range (12)]:
             self.observable.notifyAll("The game has ended")
+            ended = True
         sums_of_points = list()
         for i in self.game.players:
             sum = 0
@@ -89,18 +109,9 @@ class GameAdaptor(GamePlayerInterface):
             for x in queens:
                 sum += x.getPoints()
             sums_of_points.append(sum)
-        if max(sums_of_points) >= self.game.required_points:
+        if max(sums_of_points) >= self.game.required_points or ended == True:
             self.observable.notifyAll("The game has ended")
-
-
-
-# class GameFinishedInterface:
-#     def isFinished(self) -> bool:
-#        pass
-#
-# class GameFinished(GameFinishedInterface):
-#     pass
-
-
+            return True,str(sums_of_points.index(max(sums_of_points))+1)
+        return False,""
 
 

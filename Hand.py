@@ -1,6 +1,4 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING
-
 from Card_CardType import Card,Queen
 from Position import HandPosition,AwokenQueenPosition
 from typing import List,Optional
@@ -12,7 +10,7 @@ class Hand:
         self.cards: List[Card] = list()
         self.picked: List[Card] = list()
 
-    def getIndex(self) ->int :
+    def getIndex(self) -> int :
         return self.playerIdx
 
     def pickCards(self, position: List[HandPosition]) -> Optional[List[Card]]:
@@ -32,8 +30,13 @@ class Hand:
     def removePickedCardsAndDraw(self,picked) -> None:
         new_cards: List[Card] = self.drawing_and_trash_pile.discardAndDraw(picked)
         for i in new_cards:
-            i.setHandPosition(len(self.cards), self.getIndex())
             self.cards.append(i)
+        i = 0
+        player = self.cards[0].getHandPosition().player
+        for x in self.cards:
+            x.setHandPosition(i,player)
+            i += 1
+
     def IndexOfCardOfType(self,type) -> int:
         idx = 0
         for card in self.cards:
@@ -42,10 +45,14 @@ class Hand:
             idx += 1
         return -1
 
-    # def returnPickedCards(self) -> None:
-    #      for i in self.picked:
-    #          self.cards.append(i)
-    #      self.picked = list()
+    def returnPickedCards(self,picked) -> None:
+          for i in picked:
+              self.cards.append(i)
+          i = 0
+          player = self.cards[0].getHandPosition().player
+          for x in self.cards:
+              x.setHandPosition(i, player)
+              i += 1
 
     def hasCardOfType(self, type: int) -> bool:
         for i in self.cards:
@@ -57,7 +64,7 @@ class Hand:
         return self.cards
 
 class EvaluateAttack:
-    def __init__(self,card:Card,attacker: HandPosition, victim: AwokenQueenPosition):
+    def __init__(self, card: Card, attacker: HandPosition, victim: AwokenQueenPosition):
         self.typeOfAttack: [Card] = card
         self.targetQueen = victim
         self.victim = victim.getPlayer()
@@ -77,7 +84,6 @@ class EvaluateAttack:
         else:
             if self.typeOfAttack.getType() == 3:
                 queen: Queen = self.victim.awoken.removeQueen(self.targetQueen)
-                print(queen)
                 self.victim.update_state()
                 self.attacker.awoken.add(queen)
                 return True

@@ -5,13 +5,14 @@ if TYPE_CHECKING:
     from Player import Player
 
 class SleepingQueenPosition:
-    def __init__(self,cardIndex):
+    def __init__(self, cardIndex):
         self.cardIndex = cardIndex
 
-    def getCardIndex(self) -> int :
+    def getCardIndex(self) -> int:
         return self.cardIndex
+
 class AwokenQueenPosition:
-    def __init__(self,cardIndex,player):
+    def __init__(self, cardIndex, player):
         self.cardIndex = cardIndex
         self.player = player
 
@@ -22,6 +23,7 @@ class AwokenQueenPosition:
         return self.player
 
 class HandPosition:
+
     def __init__(self,card, player):
         self.cardIndex = card
         self.player = player
