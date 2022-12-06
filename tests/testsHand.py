@@ -6,7 +6,7 @@ from Card_CardType import Card
 from Position import HandPosition,AwokenQueenPosition,SleepingQueenPosition
 
 class TestHand(unittest.TestCase):
-    def test_hra_mock(self):
+    def test_hand_mock(self):
         cards_to_draw = [Card(2, 0), Card(1, 7), Card(6, 0)]
         self.fake_pile = Mock()
         self.fake_pile.discardAndDraw = MagicMock(return_value = cards_to_draw)
@@ -40,7 +40,7 @@ class TestHand(unittest.TestCase):
         ruka.removePickedCardsAndDraw(picked)
         self.assertEqual(5,len(ruka.getCards())) # cards have been redrawn
         self.assertEqual(kopka.getCardsDiscardedThisTurn(),[Card(1, 1), Card(1, 2), Card(1, 3)])
-        self.assertEqual(len(kopka.trash_pile),3) # cards are in trash pile now
+        self.assertEqual(len(kopka._trash_pile), 3) # cards are in trash pile now
 
     def test_evaluate_attack_and_move_queen(self):
          hra = Game(4)
@@ -61,7 +61,9 @@ class TestHand(unittest.TestCase):
          obranca.hand.cards[2].setHandPosition(2, obranca)
          obranca.hand.cards[3].setHandPosition(3, obranca)
          obranca.hand.cards[4].setHandPosition(4, obranca)
-         hra.drawing_and_trash_pile.drawing_pile[1] = Card(1, 1) # Just assuring that the second card is not (5,0) beacuse the test would fail
+         hra.drawing_and_trash_pile.drawing_pile[:5] = [Card(1, 2),Card(1, 10),Card(1, 2),Card(1, 9),Card(6, 0)]
+         # Just assuring that the second card is not (5,0) beacuse the test would fail, also for further testing, it is better that the cards at
+         # top are numbered cards, also i need that obranca has a magic wand
          self.assertTrue(utocnik.play([HandPosition(3,utocnik),AwokenQueenPosition(0,obranca)]))
          self.assertTrue(len(obranca.awoken.getQueens()) == 1) # obranca had fought off the attack
          self.assertTrue(len(utocnik.awoken.getQueens()) == 0)
@@ -70,6 +72,15 @@ class TestHand(unittest.TestCase):
          self.assertTrue(len(utocnik.awoken.getQueens()) == 1) # the attack has been sucessful
          obranca.play([HandPosition(0,obranca),AwokenQueenPosition(0,utocnik)])# obranca has put the queen to sleep
          obranca.play([HandPosition(2, obranca), SleepingQueenPosition(9)]) # obranca has used a king to wake up a queen
+         # now cards of utocnik are = [1 1, 1 2, 4 0, 1 2, 1 2]
+         # cards of obranca are =  [1 2, 1 3, 1 10, 1 9, 6 0]
+         self.assertEqual(obranca.state.cards,[Card(1,2),Card(1,3),Card(1,10),Card(1,9),Card(6,0)])
+         self.assertFalse(obranca.play([HandPosition(4,obranca),AwokenQueenPosition(0,1)])) #utocnik has no queen that could be woken up
+         self.assertTrue(utocnik.evaluateNumberedCards([Card(1,2),Card(1,2)]))
+         self.assertTrue(utocnik.play([HandPosition(1,utocnik),HandPosition(4,utocnik)]))
+
+
+
 
 
 

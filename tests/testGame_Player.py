@@ -30,7 +30,7 @@ class TestPlayer(unittest.TestCase):
         self.assertEqual(4,hra.numofplayers)
         self.assertTrue(len(hra.sleeping_queens.getQueens()),12)
         self.assertTrue(hra.required_points,40)
-        self.assertTrue(hra.drawing_and_trash_pile.trash_pile == list()) # no cards in trash pile
+        self.assertTrue(hra.drawing_and_trash_pile._trash_pile == list()) # no cards in trash pile
         self.assertEqual(len(hra.drawing_and_trash_pile.drawing_pile),42) # 20 cards has been distributed
         hra.players[0].hand.cards[0] = Card(2,0)
         state = hra.play(0,[HandPosition(0,hra.players[0]),SleepingQueenPosition(9)]) #player0 has played a king to awaken a queen
@@ -45,7 +45,7 @@ class TestPlayer(unittest.TestCase):
         pile = DrawingAndTrashPile()
         self.assertEqual(62, len(pile.drawing_pile))
         #just testing reset drawing pile method
-        pile.trash_pile = pile.drawing_pile[:]
+        pile._trash_pile = pile.drawing_pile[:]
         pile.drawing_pile = list()
         self.assertEqual(0, len(pile.drawing_pile))
         pile.reset()
