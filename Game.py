@@ -1,15 +1,16 @@
 from Player import Player
-from typing import List
+from typing import List, Optional
 from Piles import DrawingAndTrashPile
 from GameState_PlayerState import GameState, PlayerState
 from Hand import Hand
 from random import shuffle
 from Position import Position
 from Card_CardType import Queen
-from QueenCollection import QueenCollection,MoveQueen
+from QueenCollection import QueenCollection, MoveQueen
+
 
 class Game:
-    def __init__(self,numofplayers):
+    def __init__(self, numofplayers):
         self.players = []
         self.numofplayers = numofplayers
         self.state = GameState()
@@ -32,16 +33,22 @@ class Game:
                 card.setHandPosition(x, i)
                 self.players[i].hand.cards.append(card)
 
-    def play(self, playerIdx: int, cards: List[Position]) -> GameState:
-        self.players[playerIdx].play(cards)
-        onturn = (playerIdx + 1) % self.numofplayers
+    def play(self, playerIdx: int, cards: List[Position]) -> Optional[GameState]:
+
+        if self.players[playerIdx].play(cards):
+            onturn = (playerIdx + 1) % self.numofplayers
+            self.updateState(onturn)
+            return self.state
+        return None
+
+    def updateState(self,on_turn) -> None:
         awokenqueens = list()
         for i in self._players_states:
             awokenqueens.append(i.awokenQueens)
-        self.state.onTurn = onturn
+        self.state.onTurn = on_turn
         self.state.numberOfPlayers = self.numofplayers
         self.state.sleepingQueens = self.sleeping_queens
         self.state.AwokenQueens = awokenqueens
         self.state.cardsDiscardedLastTurn = self.drawing_and_trash_pile.getCardsDiscardedThisTurn()
-        return self.state
+
 

@@ -2,14 +2,7 @@ import enum
 from Position import Position,HandPosition
 from dataclasses import dataclass
 
-@dataclass
-class CardType(enum.Enum):
-    Number = 1
-    King = 2
-    Knight = 3
-    SleepingPotion = 4
-    Dragon = 5
-    MagicWand = 6
+CardType = enum.Enum("CardType", ["Number", "King", "Knight", "Potion", "Dragon", "Wand"])
 
 @dataclass
 class Queen:
@@ -25,7 +18,7 @@ class Queen:
 @dataclass
 class Card:
 
-    def __init__(self,type,value):
+    def __init__(self, type, value):
         self.type: CardType = type
         self.value: int = value
         self._handPosition = HandPosition(None, None)
@@ -33,7 +26,7 @@ class Card:
     def __repr__(self):
         return f"{self.type} {self.value}"
 
-    def setHandPosition(self,card0, player0) -> None:
+    def setHandPosition(self, card0, player0) -> None:
         self._handPosition = HandPosition(card0, player0)
 
     def getHandPosition(self) -> Position:

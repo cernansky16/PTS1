@@ -1,6 +1,6 @@
 from GameState_PlayerState import PlayerState
-from typing import List
-from Card_CardType import Card
+from typing import List,Optional
+from Card_CardType import Card,CardType,Queen
 from Position import Position,AwokenQueenPosition,HandPosition,SleepingQueenPosition
 from Hand import EvaluateAttack,Hand
 from QueenCollection import QueenCollection,MoveQueen
@@ -22,7 +22,7 @@ class Player:
         if len(hand_pos) == 1 and len(awoken_queens) == 1 and not sleeping_queens:
             index = hand_pos[0].getCardIndex()
             cards = self.hand.getCards()
-            if cards[index].getType() == 3 or cards[index].getType() == 4:
+            if cards[index].getType() == CardType.Knight or cards[index].getType() == CardType.Potion:
                 attack_card = self.hand.pickCards(hand_pos)
                 self.hand.removePickedCardsAndDraw(attack_card)
                 a = EvaluateAttack(attack_card[0],hand_pos[0],awoken_queens[0])
@@ -35,7 +35,7 @@ class Player:
             picked: List[Card] = self.hand.pickCards(hand_pos)
             countofNumbered = 0
             for card in picked:
-                if card.getType() == 1:
+                if card.getType() == CardType.Number:
                     countofNumbered += 1
             if len(picked) == countofNumbered or len(picked) == 1:
                 self.hand.removePickedCardsAndDraw(picked)
@@ -47,9 +47,9 @@ class Player:
         elif len(hand_pos) == 1 and len(sleeping_queens) == 1 and not awoken_queens:
             card: [Card] = self.hand.pickCards(hand_pos)
             position: [Position] = sleeping_queens.pop()
-            if card[0].getType() == 2:
+            if card[0].getType() == CardType.King:
                 self.move_queen.play(position)
-                self.awoken.add(self.move_queen.getLastMoved())
+                self.awoken.addAwoken(self.move_queen.getLastMoved())
                 self.hand.removePickedCardsAndDraw(card)
                 self.update_state()
                 return True
@@ -66,12 +66,18 @@ class Player:
         self.state.awokenQueens = self.awoken
         self.state.cards = self.hand.getCards()
 
+    def removeAwoken(self, position: Position) -> Optional[Queen]:
+        return self.awoken.removeAwokenQueen(position)
+
+    def addAwoken(self, queen: Queen) -> None:
+        self.awoken.addAwoken(queen)
+
     def evaluateNumberedCards(self,cards: List[Card]) -> bool:
         cards = sorted(cards, key=lambda card: card.getValue())
         if not cards:
             return False
         for i in cards:
-            if i.getType() != 1:
+            if i.getType() != CardType.Number:
                 return False
         length = len(cards)
         if length == 1:

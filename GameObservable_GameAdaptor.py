@@ -15,10 +15,11 @@ class GameObservable(GameObserverInterface):
     def addObserver(self,observer: GameObserverInterface) -> None:
         self.observers.append(observer)
 
-    def addPlayer(self,player) -> None:
+    def addPlayer(self,player) -> None: #observer:GameObserverInterface
         if len(self.players) < 5:
             self.observers.append(player)
             self.players.append(player)
+            self.notifyAll("Too many players")
 
     def remove(self,observer) -> None:
         self.observers.remove(observer)
@@ -50,7 +51,7 @@ class GameAdaptor(GamePlayerInterface):
     def create_game(self):
         self.game = Game(len(self.observable.players))
 
-    def play(self,player : str, cards: str) ->None:
+    def play(self, player: str, cards: str) -> None:
         index = int(player)
         if index-1 != self.game.state.onTurn:
             self.observable.notifyPlayer(index,"It is not your turn")
@@ -58,6 +59,7 @@ class GameAdaptor(GamePlayerInterface):
             return
         player = self.game.players[index-1]
         commands = cards.split()
+
         def getPositions() -> List[Position]:
 
             positions = list()
@@ -78,14 +80,14 @@ class GameAdaptor(GamePlayerInterface):
                 elif command[0] == "a":
                     index = int(command[2])
                     playerIdx = int(command[1])
-                    if playerIdx> self.game.numofplayers:
+                    if playerIdx > self.game.numofplayers:
                         self.observable.notifyPlayer(playerIdx,"Wrong index")
                         return list()
                     positions.append(AwokenQueenPosition(index-1,self.game.players[playerIdx-1]))
                 elif command[0] == "s":
                     index = int(command[1:])
                     if index > 12:
-                        self.observable.notifyAll("There are only 12 queens in the game")
+                        self.observable.notifyPlayer(player, "There are only 12 queens in the game")
                         return list()
 
                     else:

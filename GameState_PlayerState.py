@@ -9,11 +9,12 @@ class GameState:
     sleepingQueens: List[SleepingQueenPosition]
     AwokenQueens: List[AwokenQueenPosition]
     cardsDiscardedLastTurn: List[Card]
+    #cards ...
 
 
-class PlayerState:
-    def __init__(self,cards, awokenQueens):
+class PlayerState: # urobit
+    def __init__(self, cards, awokenQueens):
         self.cards: dict[int,Optional[Card]] = cards
-        self.awokenQueens:dict[int,Queen] = awokenQueens
+        self.awokenQueens: dict[int, Queen] = awokenQueens
     def __repr__(self):
         return f"{self.cards} {self.awokenQueens}"
