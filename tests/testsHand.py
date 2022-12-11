@@ -1,15 +1,15 @@
 import unittest
-from unittest.mock import  Mock,MagicMock
+from unittest.mock import Mock, MagicMock
 from Game import Game
 from Hand import Hand
-from Card_CardType import Card,CardType
-from Position import HandPosition,AwokenQueenPosition,SleepingQueenPosition
+from Card_CardType import Card, CardType
+from Position import HandPosition, AwokenQueenPosition, SleepingQueenPosition
 
 class TestHand(unittest.TestCase):
     def test_hand_mock(self):
         cards_to_draw = [Card(CardType.King, 0), Card(CardType.Number, 7), Card(CardType.Wand, 0)]
         self.fake_pile = Mock()
-        self.fake_pile.discardAndDraw = MagicMock(return_value = cards_to_draw)
+        self.fake_pile.discardAndDraw = MagicMock(return_value=cards_to_draw)
         ruka = Hand(0,self.fake_pile)
         ruka.cards = [Card(CardType.King, 0), Card(CardType.Number, 2), Card(CardType.King, 0),
                       Card(CardType.Number, 1), Card(CardType.Dragon, 0)]
@@ -69,7 +69,7 @@ class TestHand(unittest.TestCase):
                                                         Card(CardType.Number, 2), Card(CardType.Number, 9), Card(CardType.Wand, 0)]
          # Just assuring that the second card is not (5,0) beacuse the test would fail, also for further testing, it is better that the cards at
          # top are numbered cards, also i need that obranca has a magic wand
-         self.assertTrue(utocnik.play([HandPosition(3,utocnik),AwokenQueenPosition(0,obranca)]))
+         self.assertTrue(utocnik.play([HandPosition(3, utocnik), AwokenQueenPosition(0,obranca)]))
          self.assertTrue(len(obranca.awoken.getQueens()) == 1) # obranca had fought off the attack
          self.assertTrue(len(utocnik.awoken.getQueens()) == 0)
          utocnik.play([HandPosition(3, utocnik), AwokenQueenPosition(0, obranca)])
@@ -87,6 +87,11 @@ class TestHand(unittest.TestCase):
          obranca.play([HandPosition(1, obranca)])
          utocnik.play([HandPosition(2,utocnik),AwokenQueenPosition(0,obranca)])#obranca has a magic wand against the potion
          self.assertEqual(1, len(obranca.awoken.getQueens()))
+         # print(obranca.state)
+         cards = utocnik.hand.getCards()
+         # cards of utocnik are now [CardType.Number 1, CardType.Potion 0, CardType.Number 2, CardType.Number 1, CardType.Number 10]
+         self.assertFalse(utocnik.play([HandPosition(0, utocnik), HandPosition(1, utocnik)]))  # invalid move
+         self.assertEqual(utocnik.hand.getCards(), cards)
 
 
 
