@@ -39,7 +39,7 @@ class QueenCollection:
 
 class MoveQueen:
 
-    def __init__(self,sleeping):
+    def __init__(self, sleeping):
         self.sleeping_queens: QueenCollection = sleeping
         
     def play(self, targetQueen: Position) -> bool:

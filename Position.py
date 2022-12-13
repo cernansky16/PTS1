@@ -27,6 +27,8 @@ class HandPosition:
     def __init__(self,card, player):
         self.cardIndex = card
         self.player = player
+    def __repr__(self):
+        return f"{self.cardIndex} {self.player}"
 
     def getCardIndex(self) -> int:
         return self.cardIndex

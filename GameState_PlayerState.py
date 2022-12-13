@@ -9,7 +9,6 @@ class GameState:
     sleepingQueens: List[SleepingQueenPosition]
     AwokenQueens: List[AwokenQueenPosition]
     cardsDiscardedLastTurn: List[Card]
-    #cards ...
 
 
 class PlayerState: # urobit

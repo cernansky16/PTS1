@@ -22,8 +22,10 @@ class Game:
         self._players_states: List[PlayerState] = list()
         if self.numofplayers == 2 or self.numofplayers == 3:
             self.required_points = 50
+            self.required_queens = 5
         if self.numofplayers == 4 or self.numofplayers == 5:
             self.required_points = 40
+            self.required_queens = 4
 
         for i in range(self.numofplayers):
             hand: Hand = Hand(i, self.drawing_and_trash_pile)
@@ -50,5 +52,22 @@ class Game:
         self.state.sleepingQueens = self.sleeping_queens
         self.state.AwokenQueens = awokenqueens
         self.state.cardsDiscardedLastTurn = self.drawing_and_trash_pile.getCardsDiscardedThisTurn()
+
+    def isFinished(self) -> (bool,str):
+        ended = False
+        if self.sleeping_queens.getQueens() == [None for i in range(12)]:
+            ended = True
+        sums_of_points = list()
+        for i in self.players:
+            sum = 0
+            queens = i.awoken.getQueens()
+            if len(queens) >= self.required_queens:
+                return True, str(len(sums_of_points)+1)  #the index of player is thesame as the length of the list
+            for x in queens:
+                sum += x.getPoints()
+            sums_of_points.append(sum)
+        if max(sums_of_points) >= self.required_points or ended:
+            return True, str(sums_of_points.index(max(sums_of_points))+1)
+        return (False, "")
 
 

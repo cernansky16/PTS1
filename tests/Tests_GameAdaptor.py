@@ -39,7 +39,7 @@ class TestGameAdaptor(unittest.TestCase):
         adaptor.game.players[0].awoken.addAwoken(adaptor.game.sleeping_queens.removeSleepingQueen(SleepingQueenPosition(7)))
         # he has a lot of point but i am testing the last move where game writes that it is finished
         adaptor.play("1", "h1 s6")
-        self.assertTrue(adaptor.isFinished()[0]) #the game has finished
+        self.assertTrue(adaptor.game.isFinished()[0]) #the game has finished
         #the game has ended
         ## just testing ilegal move
         adaptor.play("2", "h1 h2")
@@ -52,7 +52,7 @@ class TestGameAdaptor(unittest.TestCase):
         adaptor.create_game()
         self.assertEqual(5, adaptor.game.numofplayers)# maximum number of players is five
         adaptor.game.sleeping_queens.collection = [None for i in range(12)]
-        self.assertTrue(adaptor.isFinished()[0])  # testing the end of the game, no queens, left
+        self.assertTrue(adaptor.game.isFinished()[0])  # testing the end of the game, no queens, left
 
 
 

@@ -95,6 +95,8 @@ class EvaluateAttack:
                 self.victim.update_state()
                 self.victim.move_queen.add(queen)
                 return True
+            else:
+                return False
 
 
 
