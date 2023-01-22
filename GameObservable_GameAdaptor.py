@@ -52,17 +52,17 @@ class GameAdaptor(GamePlayerInterface):
         self.game = Game(len(self.observable.players))
 
     def play(self, player: str, cards: str) -> None:
-        index_of_player = int(player)
-        if index_of_player-1 != self.game.state.onTurn:
+        index_of_player = int(player)-1
+        if index_of_player != self.game.state.onTurn:
             self.observable.notifyPlayer(index_of_player, "It is not your turn")
             self.observable.notifyPlayer(index_of_player,"It is not your turn")
             return
-        player = self.game.players[index_of_player-1]
+        #player = self.game.players[index_of_player-1]
         commands = cards.split()
 
         def getPositions() -> List[Position]:
 
-            positions = list()
+            positions: List[Position] = list()
             """
             Commands
             h<n> stands n-th card from hand
@@ -75,15 +75,15 @@ class GameAdaptor(GamePlayerInterface):
                     if index > 5:
                         self.observable.notifyPlayer(index_of_player, "Wrong index of card")
                         return list()
-                    pos = HandPosition(index-1, player)
+                    pos = HandPosition(index-1, index_of_player)
                     positions.append(pos)
                 elif command[0] == "a":
                     index = int(command[2])
-                    player_to_attack = int(command[1])
+                    player_to_attack = int(command[1])-1
                     if player_to_attack > self.game.numofplayers:
                         self.observable.notifyPlayer(index_of_player,"Wrong index")
                         return list()
-                    positions.append(AwokenQueenPosition(index-1,self.game.players[player_to_attack-1]))
+                    positions.append(AwokenQueenPosition(index-1,player_to_attack-1))
                 elif command[0] == "s":
                     index = int(command[1:])
                     if index > 12:
@@ -94,7 +94,7 @@ class GameAdaptor(GamePlayerInterface):
                         positions.append(SleepingQueenPosition(index-1))
             return positions
 
-        self.game.play(index_of_player-1, getPositions())
+        self.game.play(index_of_player, getPositions())
         if self.game.isFinished()[0]:
             self.observable.notifyAll(f"The game has ended, winner is player {self.game.isFinished()[1]}")
 

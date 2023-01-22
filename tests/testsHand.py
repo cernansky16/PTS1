@@ -19,8 +19,8 @@ class TestHand(unittest.TestCase):
         self.assertEqual(ruka.cards, cards0)
         self.assertEqual(0, ruka.getIndex())  # the index of hand is right
         picked = ruka.pickCards(
-            [HandPosition(0, Mock()), HandPosition(1, Mock()),
-             HandPosition(2, Mock())]) # Mock to imitate player
+            [HandPosition(0, 0), HandPosition(1, 0),
+             HandPosition(2, 0)])
         self.assertEqual(picked, [Card(CardType.Number, 1), Card(CardType.Number, 2), Card(CardType.Number, 3)])  # pick method picks right cards
         self.assertEqual(2, len(ruka.getCards()))
         ruka.removePickedCardsAndDraw(picked)
@@ -50,47 +50,47 @@ class TestHand(unittest.TestCase):
          utocnik = hra.players[0]
          utocnik.hand.cards= [Card(CardType.Number, 1), Card(CardType.Number, 2), Card(CardType.Potion, 0),
                               Card(CardType.Knight, 0), Card(CardType.Knight, 0)]
-         utocnik.hand.cards[0].setHandPosition(0,utocnik)
-         utocnik.hand.cards[1].setHandPosition(1, utocnik)
-         utocnik.hand.cards[2].setHandPosition(2, utocnik)
-         utocnik.hand.cards[3].setHandPosition(3, utocnik)
-         utocnik.hand.cards[4].setHandPosition(4, utocnik)
+         utocnik.hand.cards[0].setHandPosition(0, 0)
+         utocnik.hand.cards[1].setHandPosition(1, 0)
+         utocnik.hand.cards[2].setHandPosition(2, 0)
+         utocnik.hand.cards[3].setHandPosition(3, 0)
+         utocnik.hand.cards[4].setHandPosition(4, 0)
          obranca = hra.players[1]
          obranca.awoken.addAwoken(hra.sleeping_queens.removeSleepingQueen(SleepingQueenPosition(0)))
          self.assertFalse(hra.sleeping_queens.removeSleepingQueen(SleepingQueenPosition(0))) # cant remove queen which is not there
          obranca.hand.cards = [Card(CardType.Potion, 0), Card(CardType.Number, 2), Card(CardType.Number, 3),
                                Card(CardType.King, 0), Card(CardType.Dragon, 0)]
-         obranca.hand.cards[0].setHandPosition(0, obranca)
-         obranca.hand.cards[1].setHandPosition(1, obranca)
-         obranca.hand.cards[2].setHandPosition(2, obranca)
-         obranca.hand.cards[3].setHandPosition(3, obranca)
-         obranca.hand.cards[4].setHandPosition(4, obranca)
+         obranca.hand.cards[0].setHandPosition(0, 1)
+         obranca.hand.cards[1].setHandPosition(1, 1)
+         obranca.hand.cards[2].setHandPosition(2, 1)
+         obranca.hand.cards[3].setHandPosition(3, 1)
+         obranca.hand.cards[4].setHandPosition(4, 1)
          hra.drawing_and_trash_pile.drawing_pile[:5] = [Card(CardType.Number, 2), Card(CardType.Number, 10),
                                                         Card(CardType.Number, 2), Card(CardType.Number, 9), Card(CardType.Wand, 0)]
          # Just assuring that the second card is not (5,0) beacuse the test would fail, also for further testing, it is better that the cards at
          # top are numbered cards, also i need that obranca has a magic wand
-         self.assertTrue(utocnik.play([HandPosition(3, utocnik), AwokenQueenPosition(0,obranca)]))
+         self.assertTrue(utocnik.play([HandPosition(3, 0), AwokenQueenPosition(0, 1)]))
          self.assertTrue(len(obranca.awoken.getQueens()) == 1) # obranca had fought off the attack
          self.assertTrue(len(utocnik.awoken.getQueens()) == 0)
-         utocnik.play([HandPosition(3, utocnik), AwokenQueenPosition(0, obranca)])
+         utocnik.play([HandPosition(3, 0), AwokenQueenPosition(0, 1)])
          self.assertFalse(len(obranca.awoken.getQueens()) == 1)
          self.assertTrue(len(utocnik.awoken.getQueens()) == 1) # the attack has been sucessful
-         obranca.play([HandPosition(0,obranca),AwokenQueenPosition(0,utocnik)])# obranca has put the queen to sleep
-         obranca.play([HandPosition(2, obranca), SleepingQueenPosition(9)]) # obranca has used a king to wake up a queen
+         obranca.play([HandPosition(0,1),AwokenQueenPosition(0,0)])# obranca has put the queen to sleep
+         obranca.play([HandPosition(2, 1), SleepingQueenPosition(9)]) # obranca has used a king to wake up a queen
          # now cards of utocnik are = [1 1, 1 2, 4 0, 1 2, 1 2]
          # cards of obranca are =  [1 2, 1 3, 1 10, 1 9, 6 0]
          self.assertEqual(obranca.state.cards, [Card(CardType.Number, 2), Card(CardType.Number, 3), Card(CardType.Number, 10),
                                                Card(CardType.Number, 9), Card(CardType.Wand, 0)])
-         self.assertFalse(obranca.play([HandPosition(4, obranca),AwokenQueenPosition(0, 1)])) #utocnik has no queen that could be woken up
+         self.assertFalse(obranca.play([HandPosition(4, 1),AwokenQueenPosition(0, 1)])) #utocnik has no queen that could be woken up
          self.assertTrue(utocnik.evaluateNumberedCards([Card(CardType.Number, 2),Card(CardType.Number, 2)]))
-         self.assertTrue(utocnik.play([HandPosition(1,utocnik),HandPosition(4,utocnik)]))
-         obranca.play([HandPosition(1, obranca)])
-         utocnik.play([HandPosition(2,utocnik),AwokenQueenPosition(0,obranca)])#obranca has a magic wand against the potion
+         self.assertTrue(utocnik.play([HandPosition(1,0),HandPosition(4,0)]))
+         obranca.play([HandPosition(1, 1)])
+         utocnik.play([HandPosition(2,0),AwokenQueenPosition(0,1)])#obranca has a magic wand against the potion
          self.assertEqual(1, len(obranca.awoken.getQueens()))
          # print(obranca.state)
          cards = utocnik.hand.getCards()
          # cards of utocnik are now [CardType.Number 1, CardType.Potion 0, CardType.Number 2, CardType.Number 1, CardType.Number 10]
-         self.assertFalse(utocnik.play([HandPosition(0, utocnik), HandPosition(1, utocnik)]))  # invalid move
+         self.assertFalse(utocnik.play([HandPosition(0, 0), HandPosition(1, 0)]))  # invalid move
          self.assertEqual(utocnik.hand.getCards(), cards)
 
 

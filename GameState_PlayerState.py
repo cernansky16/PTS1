@@ -1,6 +1,6 @@
-from Position import SleepingQueenPosition,AwokenQueenPosition
-from Card_CardType import Card,Queen
-from typing import Optional,List
+from Position import SleepingQueenPosition, AwokenQueenPosition
+from Card_CardType import Card, Queen
+from typing import Optional, List
 
 
 class GameState:
@@ -12,8 +12,8 @@ class GameState:
 
 
 class PlayerState: # urobit
-    def __init__(self, cards, awokenQueens):
-        self.cards: dict[int,Optional[Card]] = cards
-        self.awokenQueens: dict[int, Queen] = awokenQueens
+    def __init__(self):
+        self.cards: List[Card] = []
+        self.awokenQueens: list[Queen] = []
     def __repr__(self):
         return f"{self.cards} {self.awokenQueens}"

@@ -20,7 +20,7 @@ class DrawingAndTrashPile:
 
         shuffle(self.drawing_pile)
 
-    def discardAndDraw(self, discard:list[Card]) -> list[Card]:
+    def discardAndDraw(self, discard: list[Card]) -> list[Card]:
         # second solution
         # if len(discard) > len(self.drawing_pile):
         #     self.reset()

@@ -3,7 +3,7 @@ from unittest.mock import Mock,MagicMock
 from Game import Game
 from Card_CardType import Card,Queen,CardType
 from QueenCollection import QueenCollection,MoveQueen
-from Position import HandPosition,SleepingQueenPosition
+from Position import HandPosition,SleepingQueenPosition,AwokenQueenPosition
 from Player import Player
 from Piles import DrawingAndTrashPile
 
@@ -12,7 +12,7 @@ class TestPlayer(unittest.TestCase):
 
     def test_Player_solitary(self):
         self.hra = Mock()
-        self.hrac0 = Player(Mock(),Mock())
+        self.hrac0 = Player(Mock(),Mock(),Mock(),Mock(),Mock())
         self.hra.drawing_and_trash_pile = Mock()
         self.hrac0.hand.removePickedCardsAndDraw = MagicMock(return_value =[Card(CardType.Number,7)])
         self.hrac0.hand.cards = [Card(CardType.Number, 1), Card(CardType.Number, 4),Card(CardType.Knight, 0),
@@ -28,11 +28,11 @@ class TestPlayer(unittest.TestCase):
         self.assertTrue(self.hrac0.evaluateNumberedCards([Card(CardType.Number, 4), Card(CardType.Number, 4)]))
         self.assertFalse(self.hrac0.evaluateNumberedCards([Card(CardType.Number, 4), Card(CardType.Number, 2)]))
         self.hrac0.hand.pickCards = MagicMock(return_value =[Card(CardType.Number,7)])
-        self.assertTrue(self.hrac0.play([HandPosition(0, self.hrac0)]))
+        self.assertTrue(self.hrac0.play([HandPosition(0, 0)]))
         self.hrac0.hand.pickCards = MagicMock(return_value=[Card(CardType.Number, 7), Card(CardType.Wand,0)])
-        self.assertFalse(self.hrac0.play([HandPosition(0, self.hrac0), HandPosition(4, self.hrac0)])) #wrongly picked cards
+        self.assertFalse(self.hrac0.play([HandPosition(0, 0), HandPosition(4, 0)])) #wrongly picked cards
         self.hrac0.hand.pickCards = MagicMock(return_value=[Card(CardType.Knight, 0), Card(CardType.Wand, 0)])
-        self.assertFalse(self.hrac0.play([HandPosition(2, self.hrac0), HandPosition(4, self.hrac0)]))  # wrongly picked cards
+        self.assertFalse(self.hrac0.play([HandPosition(2, 0), HandPosition(4, 0)]))  # wrongly picked cards
     def testGame_Gamestate(self):
 
         hra = Game(4)
@@ -68,11 +68,11 @@ class TestPlayer(unittest.TestCase):
         colection.addAwoken(Queen(10))
         self.assertEqual(1,len(colection.getQueens()))
         colection.addAwoken(Queen(5))
-        self.assertIsNone(colection.removeAwokenQueen(SleepingQueenPosition(98))) #wrong position
-        self.assertEqual(colection.removeAwokenQueen(SleepingQueenPosition(1)),Queen(5))
-        self.assertEqual(colection.removeAwokenQueen(SleepingQueenPosition(0)), Queen(10))
+        self.assertIsNone(colection.removeAwokenQueen(AwokenQueenPosition(98,0))) #wrong position
+        self.assertEqual(colection.removeAwokenQueen(AwokenQueenPosition(1,0)),Queen(5))
+        self.assertEqual(colection.removeAwokenQueen(AwokenQueenPosition(0,0)), Queen(10))
         self.assertEqual(colection.getQueens(), [])
-        self.assertIsNone(colection.removeAwokenQueen(SleepingQueenPosition(98)))
+        self.assertIsNone(colection.removeAwokenQueen(AwokenQueenPosition(98,0)))
 
     def testQueen(self):
         queen = Queen(20)
@@ -87,7 +87,7 @@ class TestPlayer(unittest.TestCase):
         card2 = Card(CardType.Number, 10)
         self.assertEqual(card2.getValue(), 10)
         card2.setHandPosition(2, Mock())
-        self.assertTrue(card2.getHandPosition().cardIndex == 2)
+        self.assertTrue(card2.getHandPosition().getCardidx() == 2)
 
     def test_MoveQueen(self):
         kralovne = QueenCollection([Queen(5), Queen(5), Queen(5), Queen(5), Queen(10), Queen(10), Queen(10), Queen(10),

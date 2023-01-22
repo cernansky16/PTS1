@@ -1,46 +1,74 @@
 from __future__ import annotations
 from Card_CardType import Card,Queen,CardType
 from Position import HandPosition,AwokenQueenPosition
-from typing import List,Optional,TYPE_CHECKING
+from typing import List,Optional,TYPE_CHECKING,Union
+
 
 if TYPE_CHECKING:
     from Piles import DrawingAndTrashPile
+    from Player import Player
 
-class Hand:
-    def __init__(self,idx: int,drawing_pile: DrawingAndTrashPile):
+
+class HandInterface:
+
+    def getIndex(self) -> int:
+        return 0
+
+    def pickCards(self, position: List[HandPosition]) -> List[Card]:
+        return []
+
+    def removePickedCardsAndDraw(self, picked: List[Card]) -> None:
+        pass
+
+    def positionOfCardOfType(self, type: CardType) -> Optional[HandPosition]:
+        pass
+
+    def returnPickedCards(self, picked: List[Card]) -> None:
+        pass
+
+    def hasCardOfType(self, type: CardType) -> bool:
+        return False
+
+    def getCards(self) -> List[Card]:
+        return []
+
+
+class Hand(HandInterface):
+
+    def __init__(self, idx: int, drawing_pile: DrawingAndTrashPile):
         self.playerIdx: int = idx
-        self.drawing_and_trash_pile = drawing_pile
+        self.drawing_and_trash_pile: DrawingAndTrashPile = drawing_pile
         self.cards: List[Card] = list()
         self.picked: List[Card] = list()
 
     def getIndex(self) -> int:
         return self.playerIdx
 
-    def pickCards(self, position: List[HandPosition]) -> Optional[List[Card]]:
+    def pickCards(self, position: List[HandPosition]) -> List[Card]:
         if not position:
-            return None
-        picked : List[Card] = []
+            return []
+        picked: List[Card] = []
         for x in position:
-            if x.getCardIndex() > 5:
-                return None
-            picked.append(self.cards[x.getCardIndex()])
+            if x.getCardidx() > 5:
+                 return []
+            picked.append(self.cards[x.getCardidx()])
         i = 0 # i is to assure that the card is poped at the right positions
         for x in position:
-            self.cards.pop(x.getCardIndex()-i)
+            self.cards.pop(x.getCardidx()-i)
             i += 1
         return picked
 
-    def removePickedCardsAndDraw(self,picked) -> None:
+    def removePickedCardsAndDraw(self, picked: List[Card]) -> None:
         new_cards: List[Card] = self.drawing_and_trash_pile.discardAndDraw(picked)
         for i in new_cards:
             self.cards.append(i)
-        i = 0
-        player = self.cards[0].getHandPosition().player
+        counter = 0
+        player = self.cards[0].getHandPosition().getPlayerIdx()
         for x in self.cards:
-            x.setHandPosition(i, player)
-            i += 1
+            x.setHandPosition(counter, player)
+            counter += 1
 
-    def positionOfCardOfType(self, type) -> Optional[HandPosition]:
+    def positionOfCardOfType(self, type: CardType) -> Optional[HandPosition]:
         idx = 0
         for card in self.cards:
             if card.type == type:
@@ -52,12 +80,12 @@ class Hand:
           for i in picked:
               self.cards.append(i)
           i = 0
-          player = self.cards[0].getHandPosition().player
+          player = self.cards[0].getHandPosition().getPlayerIdx()
           for x in self.cards:
               x.setHandPosition(i, player)
               i += 1
 
-    def hasCardOfType(self, type: int) -> bool:
+    def hasCardOfType(self, type: CardType) -> bool:
         for i in self.cards:
             if i.getType() == type:
                 return True
@@ -66,34 +94,54 @@ class Hand:
     def getCards(self) -> List[Card]:
         return self.cards
 
-class EvaluateAttack:
-    def __init__(self, card: Card, attacker: HandPosition, victim: AwokenQueenPosition):
-        self.typeOfAttack: [Card] = card
-        self.targetQueen = victim
-        self.victim = victim.getPlayer()
-        self.victim_hand = victim.getPlayer().hand
-        self.attacker = attacker.getPlayer()
-        if self.typeOfAttack.getType() == CardType.Knight:
-            self.defenseCardType = CardType.Dragon
-        elif self.typeOfAttack.getType() == CardType.Potion:
-            self.defenseCardType = CardType.Wand
 
-    def play(self) -> bool:
-        if self.victim_hand.hasCardOfType(self.defenseCardType):
-            pos = self.victim_hand.positionOfCardOfType(self.defenseCardType)
-            picked = self.victim_hand.pickCards([pos])
-            self.victim_hand.removePickedCardsAndDraw(picked)
+class EvaluateAttackInterface:
+    def set_players(self, players: List[Player]) -> None:
+        pass
+
+    def play(self, card: Card, attacker: HandPosition, victim: AwokenQueenPosition) -> bool:
+        return False
+
+
+class EvaluateAttack(EvaluateAttackInterface):
+    def set_players(self, players: List[Player]) -> None:
+        self.players: List[Player] = players
+
+    def play(self, card: Card, attacker0: HandPosition, victim0: AwokenQueenPosition) -> bool:
+        typeOfAttack: Card = card
+        targetQueen = victim0
+        attacker = self.players[attacker0.getPlayerIdx()]
+        victim = self.players[victim0.getPlayerIdx()]
+        victim_hand = victim.hand
+        if victim == attacker:
+            return False
+        if typeOfAttack.getType() == CardType.Knight:
+            defenseCardType = CardType.Dragon
+        elif typeOfAttack.getType() == CardType.Potion:
+            defenseCardType = CardType.Wand
+        else:
+            return False
+        if victim_hand.hasCardOfType(defenseCardType):
+            pos = victim_hand.positionOfCardOfType(defenseCardType)
+            if pos is None:
+                return False
+            picked = victim_hand.pickCards([pos])
+            victim_hand.removePickedCardsAndDraw(picked)
             return True
         else:
-            if self.typeOfAttack.getType() == CardType.Knight:
-                queen: Queen = self.victim.removeAwoken(self.targetQueen)
-                self.victim.update_state()
-                self.attacker.addAwoken(queen)
+            queen: Optional[Queen] = victim.removeAwoken(targetQueen)
+            if typeOfAttack.getType() == CardType.Knight:
+
+                if queen is None:
+                    return False
+                victim.update_state()
+                attacker.addAwoken(queen)
                 return True
-            elif self.typeOfAttack.getType() == CardType.Potion:
-                queen = self.victim.removeAwoken(self.targetQueen)
-                self.victim.update_state()
-                self.victim.move_queen.add(queen)
+            elif typeOfAttack.getType() == CardType.Potion:
+                if queen is None:
+                    return False
+                victim.update_state()
+                victim.move_queen.add(queen)
                 return True
             else:
                 return False
