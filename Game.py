@@ -9,7 +9,6 @@ from Card_CardType import Queen
 from QueenCollection import QueenCollection, MoveQueen
 
 if TYPE_CHECKING:
-    from GameObservable_GameAdaptor import GameFinished
     from Position import Position
 
 class Game:
@@ -34,12 +33,7 @@ class Game:
             hand: Hand = Hand(i, self.drawing_and_trash_pile)
             self.players.append(Player(hand, QueenCollection(), MoveQueen(self.sleeping_queens), PlayerState(),
                                        EvaluateAttack()))
-            # for x in range(5):
-            #     card = self.drawing_and_trash_pile.drawing_pile.pop() #asi zmenit
-            #     card.setHandPosition(x, i)
-            #     self.players[i].hand.cards.append(card)
             hand.draw5Cards()
-            # self.players[i].hand.cards.append(card)
         for i in range(numofplayers):
             self.players[i].evaluate_attack.set_players(self.players)
 
