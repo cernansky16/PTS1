@@ -1,9 +1,5 @@
-from __future__ import annotations
-from typing import Union,TYPE_CHECKING
+from typing import Union
 
-if TYPE_CHECKING:
-    from Player import Player
-    from Card_CardType import Card
 
 class SleepingQueenPosition:
     def __init__(self, cardIndex: int):
@@ -14,7 +10,7 @@ class SleepingQueenPosition:
 
 
 class AwokenQueenPosition:
-    def __init__(self, cardIndex, player: int):
+    def __init__(self, cardIndex: int, player: int):
         self.cardIndex = cardIndex
         self.player = player
 
@@ -27,8 +23,8 @@ class AwokenQueenPosition:
 class HandPosition:
 
     def __init__(self, cardidx: int, player: int):
-        self.cardIdx = cardidx
-        self.playeridx = player
+        self.cardIdx: int = cardidx
+        self.playeridx: int = player
 
     def __repr__(self):
         return f"{self.cardIdx} {self.playeridx}"

@@ -1,9 +1,14 @@
-from GameState_PlayerState import PlayerState
-from typing import List, Optional, Union
+from __future__ import annotations
+from typing import List, Optional, Union,TYPE_CHECKING
 from Card_CardType import Card, CardType, Queen
 from Position import Position, AwokenQueenPosition, HandPosition, SleepingQueenPosition
-from Hand import EvaluateAttackInterface, HandInterface
-from QueenCollection import QueenCollectionInterface, MoveQueenInterface
+
+if TYPE_CHECKING:
+    from Hand import EvaluateAttackInterface, HandInterface
+
+    from GameState_PlayerState import PlayerState
+    from QueenCollection import QueenCollectionInterface, MoveQueenInterface
+
 
 class Player:
     def __init__(self, hand: HandInterface, queenCollection: QueenCollectionInterface, movequeeninstance: MoveQueenInterface,
@@ -47,7 +52,7 @@ class Player:
                 return False
         elif len(hand_pos) == 1 and len(sleeping_queens) == 1 and not awoken_queens:
             card0: List[Card] = self.hand.pickCards(hand_pos)
-            position: Union[AwokenQueenPosition,SleepingQueenPosition] = sleeping_queens.pop()
+            position: SleepingQueenPosition = sleeping_queens.pop()
             if card0[0].getType() == CardType.King:
                 self.move_queen.play(position)
                 self.awoken.addAwoken(self.move_queen.getLastMoved())
@@ -67,7 +72,7 @@ class Player:
         self.state.awokenQueens = self.awoken.getQueens()
         self.state.cards = self.hand.getCards()
 
-    def removeAwoken(self, position: Position) -> Optional[Queen]:
+    def removeAwoken(self, position: AwokenQueenPosition) -> Optional[Queen]:
         return self.awoken.removeAwokenQueen(position)
 
     def addAwoken(self, queen: Queen) -> None:

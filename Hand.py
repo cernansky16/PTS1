@@ -1,12 +1,11 @@
 from __future__ import annotations
-from Card_CardType import Card,Queen,CardType
-from Position import HandPosition,AwokenQueenPosition
-from typing import List,Optional,TYPE_CHECKING,Union
-
-
+from typing import List, Optional, TYPE_CHECKING
+from Card_CardType import Card, Queen, CardType
 if TYPE_CHECKING:
     from Piles import DrawingAndTrashPile
     from Player import Player
+    from Position import HandPosition, AwokenQueenPosition
+
 
 
 class HandInterface:
@@ -17,6 +16,12 @@ class HandInterface:
     def pickCards(self, position: List[HandPosition]) -> List[Card]:
         return []
 
+    def draw5Cards(self) -> None:
+        pass
+
+    def setCards(self,  list0: List[Card],n: int)->None:
+        pass
+
     def removePickedCardsAndDraw(self, picked: List[Card]) -> None:
         pass
 
@@ -24,6 +29,9 @@ class HandInterface:
         pass
 
     def returnPickedCards(self, picked: List[Card]) -> None:
+        pass
+
+    def setPositions(self)->None:
         pass
 
     def hasCardOfType(self, type: CardType) -> bool:
@@ -43,6 +51,25 @@ class Hand(HandInterface):
 
     def getIndex(self) -> int:
         return self.playerIdx
+
+    def setCards(self, list0: List[Card], n: int = 5) -> None:
+        if n != 5:
+            self.cards[n] = list0.pop()
+            self.cards[n].setHandPosition(n, self.playerIdx)
+            return
+        self.cards = list0
+        self.setPositions()
+
+
+    def draw5Cards(self) -> None:
+        self.cards = self.drawing_and_trash_pile.draw5(self.playerIdx)
+        self.setPositions()
+
+    def setPositions(self) -> None:
+        i = 0
+        for card in self.cards:
+            card.setHandPosition(i, self.playerIdx)
+            i += 1
 
     def pickCards(self, position: List[HandPosition]) -> List[Card]:
         if not position:

@@ -1,10 +1,12 @@
-from Card_CardType import Queen
-from Position import SleepingQueenPosition,AwokenQueenPosition
-from typing import List, Optional,Union
+from __future__ import annotations
 
 
+from typing import List, Optional,Union,TYPE_CHECKING
+if TYPE_CHECKING:
+    from Position import SleepingQueenPosition, AwokenQueenPosition
+    from Card_CardType import Queen
 class QueenCollectionInterface:
-    def addAwoken(self, queen: Queen) -> None:
+    def addAwoken(self, queen: Optional[Queen]) -> None:
         pass
 
     def addSleeping(self, queen: Queen) -> None:
@@ -16,18 +18,20 @@ class QueenCollectionInterface:
     def removeSleepingQueen(self, position: SleepingQueenPosition) -> Optional[Queen]:
         pass
 
-    def getQueens(self) -> List[Queen]:
+    def getQueens(self) -> List[Optional[Queen]]:
         return []
 
 
 class QueenCollection(QueenCollectionInterface):
-    def __init__(self, collection=None):
+    def __init__(self, collection=None)->None:
         if collection is None:
-            self.collection = list()
+            self.collection: List[Optional[Queen]] = list()
         else:
-            self.collection: List[Queen] = collection
+            self.collection = collection
 
-    def addAwoken(self, queen: Queen) -> None:
+    def addAwoken(self, queen: Optional[Queen]) -> None:
+        if queen is None:
+            return
         self.collection.append(queen)
 
     def addSleeping(self,queen: Queen) -> None:
@@ -46,16 +50,21 @@ class QueenCollection(QueenCollectionInterface):
     def removeSleepingQueen(self, position: SleepingQueenPosition) -> Optional[Queen]:
         try:
             queen = self.collection[position.getCardIndex()]
+            if queen is None:
+                return None
             self.collection[position.getCardIndex()] = None
             return queen
         except IndexError:
             return None
+    def __getitem__(self, item:int)->Optional[Queen]:
+        return self.collection[item]
 
-    def getQueens(self) -> List[Queen]:
+    def getQueens(self) -> List[Optional[Queen]]:
         return self.collection
 
+
 class MoveQueenInterface:
-    def play(self, targetQueen: Union[SleepingQueenPosition,AwokenQueenPosition]) -> bool:
+    def play(self, targetQueen: SleepingQueenPosition) -> bool:
         return False
 
     def add(self, queen: Queen) -> None:
@@ -67,10 +76,10 @@ class MoveQueenInterface:
 
 class MoveQueen(MoveQueenInterface):
 
-    def __init__(self, sleeping):
+    def __init__(self, sleeping)->None:
         self.sleeping_queens: QueenCollection = sleeping
         
-    def play(self, targetQueen: Union[SleepingQueenPosition,AwokenQueenPosition]) -> bool:
+    def play(self, targetQueen: SleepingQueenPosition) -> bool:
         queens = self.sleeping_queens.getQueens()
         if queens[targetQueen.getCardIndex()] is not None:
             self.last = self.sleeping_queens.removeSleepingQueen(targetQueen)

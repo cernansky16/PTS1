@@ -18,12 +18,12 @@ class Queen:
 @dataclass
 class Card:
 
-    def __init__(self, type, value):
+    def __init__(self, type, value)->None:
         self.type: CardType = type
         self.value: int = value
         self._handPosition = HandPosition(-1, -1)
 
-    def __repr__(self):
+    def __repr__(self)->str:
         return f"{self.type} {self.value}"
 
     def setHandPosition(self, card0, player0) -> None:
